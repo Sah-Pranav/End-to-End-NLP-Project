@@ -8,7 +8,7 @@ __version__ = "0.0.0"
 
 REPO_NAME = "End-to-End-NLP-Project"
 AUTHOR_USER_NAME = "Sah-Pranav"
-SRC_REPO = "Text and Dialogue Summarizer"
+SRC_REPO = "TextandDialogueSummarizer"
 AUTHOR_EMAIL = "pranavsah997@gmail.com"
 
 
