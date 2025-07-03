@@ -1,3 +1,14 @@
-from src.TextandDialogueSummarizer.logging import logger
+from TextandDialogueSummarizer.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
+from TextandDialogueSummarizer.logging import logger
 
-logger.info("My custom logging started")
+
+STAGE_NAME = "Data Ingestion stage"
+try:
+   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
+   data_ingestion = DataIngestionTrainingPipeline()
+   data_ingestion.main()
+   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+        logger.exception(e)
+        raise e
+
