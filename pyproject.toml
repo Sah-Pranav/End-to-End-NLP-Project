@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "text-and-dialogue-summarizer"
+version = "0.1.0"
+description = "End-to-end text and dialogue summarization with Hugging Face Transformers."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Pranav Sah" }
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
