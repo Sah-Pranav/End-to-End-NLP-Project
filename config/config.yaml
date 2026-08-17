@@ -1,20 +1,24 @@
 artifacts_root: artifacts
 
+dataset:
+  name: EdinburghNLP/xsum
+  cache_dir: artifacts/data/cache
+  processed_dir: artifacts/data/processed
 
-data_ingestion:
-  root_dir: artifacts/data_ingestion
-  source_URL: https://github.com/Sah-Pranav/End-to-End-NLP-Project/raw/refs/heads/main/Samsum_data.zip
-  local_data_file: artifacts/data_ingestion/data.zip
-  unzip_dir: artifacts/data_ingestion
+models:
+  primary: google/flan-t5-base
+  efficient_baseline: sshleifer/distilbart-cnn-6-6
+  reference: facebook/bart-large-cnn
 
+model_artifacts:
+  root_dir: artifacts/models
+  baseline_dir: artifacts/models/baselines
+  fine_tuned_dir: artifacts/models/flan-t5-base-lora
 
-data_validation:
-  root_dir: artifacts/data_validation
-  STATUS_FILE: artifacts/data_validation/status.txt
-  ALL_REQUIRED_FILES: ["train", "test", "validation"]
+results:
+  root_dir: results
+  predictions_dir: results/predictions
+  metrics_file: results/model_comparison.json
 
-
-data_transformation:
-  root_dir: artifacts/data_transformation
-  data_path: artifacts/data_ingestion/samsum_dataset
-  tokenizer_name: facebook/bart-large-cnn
+logs:
+  root_dir: logs
