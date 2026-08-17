@@ -4,11 +4,12 @@ data:
   max_test_samples: null
   development_mode: false
   seed: 42
-
+  development_train_samples: 1000
+  development_validation_samples: 200
+  development_test_samples: 200
 tokenization:
   max_input_length: 512
   max_target_length: 64
-
 training:
   learning_rate: 0.0002
   num_train_epochs: 1
@@ -21,21 +22,18 @@ training:
   save_strategy: epoch
   eval_strategy: epoch
   fp16: false
-
 lora:
   r: 8
   alpha: 16
   dropout: 0.05
   target_modules:
-    - q
-    - v
-
+  - q
+  - v
 generation:
   max_new_tokens: 64
   num_beams: 4
   do_sample: false
   length_penalty: 1.0
-
 evaluation:
   batch_size: 2
   max_samples: null
