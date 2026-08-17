@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Testing
+pytest
+httpx
+
+# Code quality
+ruff

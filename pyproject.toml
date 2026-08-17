@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "text-and-dialogue-summarizer"
 version = "0.1.0"
-description = "End-to-end text and dialogue summarization with Hugging Face Transformers."
+description = "Production-oriented text summarization system with fine-tuning, evaluation, and API inference."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.12"
 license = { file = "LICENSE" }
 authors = [
     { name = "Pranav Sah" }
