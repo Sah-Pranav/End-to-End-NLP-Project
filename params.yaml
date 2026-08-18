@@ -34,6 +34,7 @@ generation:
   num_beams: 4
   do_sample: false
   length_penalty: 1.0
+  no_repeat_ngram_size: 3
 evaluation:
   batch_size: 2
   max_samples: null

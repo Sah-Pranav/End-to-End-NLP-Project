@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datasets import DatasetDict, load_dataset
-
 from summarization.config import DataConfig
 
 
@@ -69,7 +69,7 @@ def validate_dataset(dataset: DatasetDict) -> None:
 
 def create_subset(
     dataset: DatasetDict,
-    limits: dict[str, int | None],
+    limits: Mapping[str, int | None],
     seed: int,
 ) -> DatasetDict:
     """Create deterministic subsets using the configured limits."""
