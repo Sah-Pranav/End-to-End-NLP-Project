@@ -6,7 +6,11 @@ from dataclasses import dataclass
 import torch
 
 from summarization.config import GenerationConfig, TokenizationConfig
+from summarization.logging_utils import get_logger
 from summarization.models import LoadedModel
+
+
+logger = get_logger(__name__)
 
 
 @dataclass(frozen=True)
@@ -27,6 +31,8 @@ def summarize(
 
     if not text or not text.strip():
         raise ValueError("Input text must not be empty.")
+
+    logger.debug("Inference started")
 
     model = loaded_model.model
     tokenizer = loaded_model.tokenizer
@@ -65,6 +71,11 @@ def summarize(
         torch.mps.synchronize()
 
     latency_ms = (time.perf_counter() - start_time) * 1000
+
+    logger.debug(
+        "Inference completed: latency_ms=%.2f",
+        latency_ms,
+    )
 
     decoded = tokenizer.decode(
         output_ids[0],

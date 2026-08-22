@@ -1,27 +1,57 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+
 from datasets import DatasetDict, load_dataset
+
 from summarization.config import DataConfig
+from summarization.logging_utils import get_logger
 
 
 REQUIRED_SPLITS = {"train", "validation", "test"}
 REQUIRED_COLUMNS = {"document", "summary", "id"}
 
+logger = get_logger(__name__)
+
 
 def load_xsum(config: DataConfig) -> DatasetDict:
     """Load and validate the configured XSum dataset."""
 
-    dataset = load_dataset(config.dataset_name)
+    logger.info("Loading dataset: %s", config.dataset_name)
+
+    dataset = load_dataset(
+        path=config.dataset_name,
+    )
+
+    logger.info(
+        "Dataset loaded: train=%d validation=%d test=%d",
+        len(dataset["train"]),
+        len(dataset["validation"]),
+        len(dataset["test"]),
+    )
 
     validate_dataset(dataset)
 
     limits = get_sample_limits(config)
 
     if any(limit is not None for limit in limits.values()):
-        dataset = create_subset(dataset, limits, config.seed)
+        logger.info("Creating configured dataset subsets.")
+
+        dataset = create_subset(
+            dataset=dataset,
+            limits=limits,
+            seed=config.seed,
+        )
+
+        logger.info(
+            "Dataset subsets created: train=%d validation=%d test=%d",
+            len(dataset["train"]),
+            len(dataset["validation"]),
+            len(dataset["test"]),
+        )
 
     return dataset
+
 
 def get_sample_limits(
     config: DataConfig,

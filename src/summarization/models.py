@@ -9,6 +9,10 @@ from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 
 from summarization.config import ModelConfig
 
+from summarization.logging_utils import get_logger
+
+logger = get_logger(__name__)
+
 
 class Seq2SeqModel(Protocol):
     """Interface required by the inference layer."""
@@ -32,8 +36,12 @@ class LoadedModel:
 def load_model(model_name: str) -> LoadedModel:
     """Load a pretrained sequence-to-sequence model and tokenizer."""
 
+    logger.info("Loading model: %s", model_name)
+
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+    logger.info("Model loaded: %s", model_name)
 
     return LoadedModel(
         tokenizer=tokenizer,

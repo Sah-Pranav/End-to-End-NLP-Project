@@ -15,7 +15,11 @@ from summarization.evaluation import (
     evaluate_summaries,
 )
 from summarization.inference import summarize
+from summarization.logging_utils import get_logger
 from summarization.models import LoadedModel
+
+
+logger = get_logger(__name__)
 
 
 @dataclass(frozen=True)
@@ -80,6 +84,12 @@ def benchmark_model(
     else:
         num_examples = len(dataset)
 
+    logger.info(
+        "Benchmark started: model=%s examples=%d",
+        loaded_model.model_name,
+        num_examples,
+    )
+
     predictions: list[str] = []
     reference_summaries: list[str] = []
     latencies_ms: list[float] = []
@@ -108,7 +118,7 @@ def benchmark_model(
         calculate_latency_statistics(latencies_ms)
     )
 
-    return BenchmarkResult(
+    result = BenchmarkResult(
         model_name=loaded_model.model_name,
         num_examples=num_examples,
         evaluation=evaluation,
@@ -116,3 +126,11 @@ def benchmark_model(
         median_latency_ms=median_latency,
         p95_latency_ms=p95_latency,
     )
+
+    logger.info(
+        "Benchmark completed: model=%s examples=%d",
+        result.model_name,
+        result.num_examples,
+    )
+
+    return result
