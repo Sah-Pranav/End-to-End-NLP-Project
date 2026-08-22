@@ -1,0 +1,24 @@
+from __future__ import annotations
+
+import json
+from dataclasses import asdict
+from pathlib import Path
+
+from summarization.benchmark import BenchmarkResult
+
+
+def save_benchmark_result(
+    result: BenchmarkResult,
+    output_path: str | Path,
+) -> None:
+    """Save a benchmark result as structured JSON."""
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = asdict(result)
+
+    with output_path.open("w", encoding="utf-8") as file:
+        json.dump(payload, file, indent=2)
+
+        file.write("\n")

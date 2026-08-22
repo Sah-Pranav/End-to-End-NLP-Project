@@ -3,6 +3,8 @@ from summarization.config import (
     ModelConfig,
     GenerationConfig,
     TokenizationConfig,
+    EvaluationConfig,
+    ResultsConfig,
 )
 
 
@@ -63,3 +65,25 @@ def test_tokenization_config_contains_expected_values():
 
     assert config.max_input_length == 512
     assert config.max_target_length == 64
+
+
+def test_evaluation_config_contains_expected_values():
+    config = EvaluationConfig(
+        batch_size=2,
+        max_samples=20,
+    )
+
+    assert config.batch_size == 2
+    assert config.max_samples == 20
+
+
+def test_results_config_contains_expected_values():
+    config = ResultsConfig(
+        root_dir="results",
+        predictions_dir="results/predictions",
+        metrics_file="results/model_comparison.json",
+    )
+
+    assert config.root_dir == "results"
+    assert config.predictions_dir == "results/predictions"
+    assert config.metrics_file == "results/model_comparison.json"

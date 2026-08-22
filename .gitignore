@@ -64,3 +64,6 @@ models/
 
 # Hugging Face cache
 .huggingface/
+
+# Generated experiment results
+results/

@@ -44,6 +44,19 @@ class TokenizationConfig:
     max_target_length: int
 
 
+@dataclass(frozen=True)
+class EvaluationConfig:
+    batch_size: int
+    max_samples: int | None
+
+
+@dataclass(frozen=True)
+class ResultsConfig:
+    root_dir: str
+    predictions_dir: str
+    metrics_file: str
+
+
 def load_tokenization_config(
     params_path: str | Path = "params.yaml",
 ) -> TokenizationConfig:
@@ -129,4 +142,33 @@ def load_generation_config(
         do_sample=generation["do_sample"],
         length_penalty=generation["length_penalty"],
         no_repeat_ngram_size=generation["no_repeat_ngram_size"],
+    )
+
+
+def load_evaluation_config(
+    params_path: str | Path = "params.yaml",
+) -> EvaluationConfig:
+    """Build the evaluation configuration from project parameters."""
+
+    params = load_yaml(params_path)
+    evaluation = params["evaluation"]
+
+    return EvaluationConfig(
+        batch_size=evaluation["batch_size"],
+        max_samples=evaluation["max_samples"],
+    )
+
+
+def load_results_config(
+    config_path: str | Path = "config/config.yaml",
+) -> ResultsConfig:
+    """Build the results configuration from the project YAML file."""
+
+    config = load_yaml(config_path)
+    results = config["results"]
+
+    return ResultsConfig(
+        root_dir=results["root_dir"],
+        predictions_dir=results["predictions_dir"],
+        metrics_file=results["metrics_file"],
     )

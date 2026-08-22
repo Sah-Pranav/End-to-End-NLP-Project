@@ -37,4 +37,4 @@ generation:
   no_repeat_ngram_size: 3
 evaluation:
   batch_size: 2
-  max_samples: null
+  max_samples: 20
