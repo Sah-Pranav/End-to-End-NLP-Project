@@ -57,6 +57,29 @@ class ResultsConfig:
     metrics_file: str
 
 
+@dataclass(frozen=True)
+class TrainingConfig:
+    learning_rate: float
+    num_train_epochs: int
+    per_device_train_batch_size: int
+    per_device_eval_batch_size: int
+    gradient_accumulation_steps: int
+    weight_decay: float
+    warmup_ratio: float
+    logging_steps: int
+    save_strategy: str
+    eval_strategy: str
+    fp16: bool
+
+
+@dataclass(frozen=True)
+class LoraConfig:
+    r: int
+    alpha: int
+    dropout: float
+    target_modules: tuple[str, ...]
+
+
 def load_tokenization_config(
     params_path: str | Path = "params.yaml",
 ) -> TokenizationConfig:
@@ -171,4 +194,43 @@ def load_results_config(
         root_dir=results["root_dir"],
         predictions_dir=results["predictions_dir"],
         metrics_file=results["metrics_file"],
+    )
+
+
+def load_training_config(
+    params_path: str | Path = "params.yaml",
+) -> TrainingConfig:
+    """Build the training configuration from project parameters."""
+
+    params = load_yaml(params_path)
+    training = params["training"]
+
+    return TrainingConfig(
+        learning_rate=training["learning_rate"],
+        num_train_epochs=training["num_train_epochs"],
+        per_device_train_batch_size=training["per_device_train_batch_size"],
+        per_device_eval_batch_size=training["per_device_eval_batch_size"],
+        gradient_accumulation_steps=training["gradient_accumulation_steps"],
+        weight_decay=training["weight_decay"],
+        warmup_ratio=training["warmup_ratio"],
+        logging_steps=training["logging_steps"],
+        save_strategy=training["save_strategy"],
+        eval_strategy=training["eval_strategy"],
+        fp16=training["fp16"],
+    )
+
+
+def load_lora_config(
+    params_path: str | Path = "params.yaml",
+) -> LoraConfig:
+    """Build the LoRA configuration from project parameters."""
+
+    params = load_yaml(params_path)
+    lora = params["lora"]
+
+    return LoraConfig(
+        r=lora["r"],
+        alpha=lora["alpha"],
+        dropout=lora["dropout"],
+        target_modules=tuple(lora["target_modules"]),
     )

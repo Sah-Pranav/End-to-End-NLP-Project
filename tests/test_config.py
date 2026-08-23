@@ -5,6 +5,8 @@ from summarization.config import (
     TokenizationConfig,
     EvaluationConfig,
     ResultsConfig,
+    load_lora_config,
+    load_training_config,
 )
 
 
@@ -87,3 +89,28 @@ def test_results_config_contains_expected_values():
     assert config.root_dir == "results"
     assert config.predictions_dir == "results/predictions"
     assert config.metrics_file == "results/model_comparison.json"
+
+
+def test_load_training_config():
+    config = load_training_config()
+
+    assert config.learning_rate == 0.0002
+    assert config.num_train_epochs == 1
+    assert config.per_device_train_batch_size == 2
+    assert config.per_device_eval_batch_size == 2
+    assert config.gradient_accumulation_steps == 8
+    assert config.weight_decay == 0.01
+    assert config.warmup_ratio == 0.05
+    assert config.logging_steps == 50
+    assert config.save_strategy == "epoch"
+    assert config.eval_strategy == "epoch"
+    assert config.fp16 is False
+
+
+def test_load_lora_config():
+    config = load_lora_config()
+
+    assert config.r == 8
+    assert config.alpha == 16
+    assert config.dropout == 0.05
+    assert config.target_modules == ("q", "v")
