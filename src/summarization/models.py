@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Iterator, Protocol
 
 import torch
+from peft import PeftConfig, PeftModel
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 
 from summarization.config import ModelConfig
-
 from summarization.logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -47,6 +48,55 @@ def load_model(model_name: str) -> LoadedModel:
         tokenizer=tokenizer,
         model=model,
         model_name=model_name,
+    )
+
+
+def load_fine_tuned_model(
+    adapter_path: str | Path,
+) -> LoadedModel:
+    """Load a LoRA fine-tuned model and tokenizer."""
+
+    adapter_path = str(adapter_path)
+
+    logger.info(
+        "Loading fine-tuned adapter from: %s",
+        adapter_path,
+    )
+
+    peft_config = PeftConfig.from_pretrained(
+        adapter_path,
+    )
+
+    base_model_name = peft_config.base_model_name_or_path
+
+    if not base_model_name:
+        raise ValueError(
+            "PEFT adapter configuration does not specify "
+            "a base model name."
+        )
+
+    tokenizer = AutoTokenizer.from_pretrained(
+        adapter_path,
+    )
+
+    base_model = AutoModelForSeq2SeqLM.from_pretrained(
+        base_model_name,
+    )
+
+    model = PeftModel.from_pretrained(
+        base_model,
+        adapter_path,
+    )
+
+    logger.info(
+        "Fine-tuned model loaded: base=%s adapter=%s",
+        base_model_name,
+        adapter_path,
+    )
+    return LoadedModel(
+        tokenizer=tokenizer,
+        model=model,
+        model_name=base_model_name,
     )
 
 
