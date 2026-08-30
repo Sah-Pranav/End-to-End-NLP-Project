@@ -67,3 +67,7 @@ models/
 
 # Generated experiment results
 results/
+
+# Keep portfolio benchmark visualizations
+!docs/results/
+!docs/results/*.png
