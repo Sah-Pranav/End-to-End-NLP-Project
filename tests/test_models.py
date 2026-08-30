@@ -143,7 +143,7 @@ def test_load_fine_tuned_model(monkeypatch):
     assert isinstance(loaded, LoadedModel)
     assert loaded.tokenizer is tokenizer
     assert loaded.model is fine_tuned_model
-    assert loaded.model_name == "test-base-model"
+    assert loaded.model_name == "test-base-model + LoRA"
 
 
 def test_load_fine_tuned_model_rejects_missing_base_model(

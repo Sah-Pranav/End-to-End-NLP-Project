@@ -96,7 +96,7 @@ def load_fine_tuned_model(
     return LoadedModel(
         tokenizer=tokenizer,
         model=model,
-        model_name=base_model_name,
+        model_name=f"{base_model_name} + LoRA",
     )
 
 
