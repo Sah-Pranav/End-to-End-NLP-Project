@@ -16,6 +16,7 @@ from summarization.logging_utils import (
     get_logger,
 )
 from summarization.models import load_model
+from summarization.reproducibility import set_global_seed
 from summarization.tokenization import tokenize_dataset
 from summarization.training import (
     build_trainer,
@@ -39,7 +40,12 @@ def main() -> None:
     training_config = load_training_config()
     lora_config = load_lora_config()
 
+    set_global_seed(
+        data_config.seed,
+    )
+
     config = load_yaml("config/config.yaml")
+
     output_dir = Path(
         config["model_artifacts"]["fine_tuned_dir"]
     )
