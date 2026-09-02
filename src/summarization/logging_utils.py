@@ -8,35 +8,41 @@ def configure_logging(
     log_dir: str | Path = "logs",
     level: int = logging.INFO,
 ) -> None:
-    """Configure console and file logging for the application."""
+    """Configure application console and file logging."""
 
     log_path = Path(log_dir)
     log_path.mkdir(parents=True, exist_ok=True)
 
     formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+        fmt=(
+            "%(asctime)s | %(levelname)s | "
+            "%(name)s | %(message)s"
+        ),
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    root_logger = logging.getLogger()
+    project_logger = logging.getLogger(
+        "summarization"
+    )
+    project_logger.setLevel(level)
+    project_logger.propagate = False
 
-    if root_logger.handlers:
+    if project_logger.handlers:
         return
 
-    root_logger.setLevel(level)
-
     console_handler = logging.StreamHandler()
+    console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
 
     file_handler = logging.FileHandler(
         log_path / "summarization.log",
         encoding="utf-8",
     )
+    file_handler.setLevel(level)
     file_handler.setFormatter(formatter)
 
-    root_logger.addHandler(console_handler)
-    root_logger.addHandler(file_handler)
-    logging.getLogger("httpx").setLevel(logging.WARNING)
+    project_logger.addHandler(console_handler)
+    project_logger.addHandler(file_handler)
 
 
 def get_logger(name: str) -> logging.Logger:

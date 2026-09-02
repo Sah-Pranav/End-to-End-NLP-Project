@@ -10,7 +10,10 @@ from summarization.config import (
     load_yaml,
 )
 from summarization.inference import summarize
-from summarization.logging_utils import get_logger
+from summarization.logging_utils import (
+    configure_logging,
+    get_logger,
+)
 from summarization.models import load_fine_tuned_model
 from summarization.schemas import (
     SummarizationRequest,
@@ -25,10 +28,19 @@ logger = get_logger(__name__)
 async def lifespan(app: FastAPI):
     """Load inference resources when the application starts."""
 
+    configure_logging()
+
+    logger.info("Starting summarization API.")
+
     config = load_yaml("config/config.yaml")
 
     adapter_path = Path(
         config["model_artifacts"]["fine_tuned_dir"]
+    )
+
+    logger.info(
+        "Loading fine-tuned model from: %s",
+        adapter_path,
     )
 
     app.state.loaded_model = load_fine_tuned_model(
@@ -43,7 +55,14 @@ async def lifespan(app: FastAPI):
         load_tokenization_config()
     )
 
+    logger.info(
+        "Summarization API is ready. Model: %s",
+        app.state.loaded_model.model_name,
+    )
+
     yield
+
+    logger.info("Shutting down summarization API.")
 
 
 app = FastAPI(
@@ -104,6 +123,12 @@ def summarize_text(
 ) -> SummarizationResponse:
     """Generate a summary for the provided text."""
 
+    logger.info(
+        "Received summarization request: "
+        "input_length=%d characters",
+        len(request.text),
+    )
+
     try:
         result = summarize(
             loaded_model=app.state.loaded_model,
@@ -126,6 +151,13 @@ def summarize_text(
             ),
             detail="Failed to generate summary.",
         )
+
+    logger.info(
+        "Summarization completed: "
+        "latency_ms=%.2f, summary_length=%d characters",
+        result.latency_ms,
+        len(result.summary),
+    )
 
     return SummarizationResponse(
         summary=result.summary,
