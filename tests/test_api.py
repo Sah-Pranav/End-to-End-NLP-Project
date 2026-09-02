@@ -177,3 +177,47 @@ def test_summarize_rejects_empty_text(client):
     )
 
     assert response.status_code == 422
+
+
+def test_summarize_rejects_text_that_is_too_long(
+    client,
+):
+    response = client.post(
+        "/summarize",
+        json={
+            "text": "a" * 20_001,
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_summarize_handles_inference_failure(
+    client,
+    monkeypatch,
+):
+    def failing_summarize(
+        loaded_model,
+        text,
+        generation_config,
+        tokenization_config,
+    ):
+        raise RuntimeError("Model inference failed.")
+
+    monkeypatch.setattr(
+        api,
+        "summarize",
+        failing_summarize,
+    )
+
+    response = client.post(
+        "/summarize",
+        json={
+            "text": "This request will fail.",
+        },
+    )
+
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": "Failed to generate summary.",
+    }

@@ -7,6 +7,7 @@ class SummarizationRequest(BaseModel):
     text: str = Field(
         ...,
         min_length=1,
+        max_length=20_000,
         description="Text to summarize.",
     )
 

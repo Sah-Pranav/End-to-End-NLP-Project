@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 
 from summarization.config import (
     load_generation_config,
@@ -9,11 +9,15 @@ from summarization.config import (
     load_yaml,
 )
 from summarization.inference import summarize
+from summarization.logging_utils import get_logger
 from summarization.models import load_fine_tuned_model
 from summarization.schemas import (
     SummarizationRequest,
     SummarizationResponse,
 )
+
+
+logger = get_logger(__name__)
 
 
 @asynccontextmanager
@@ -88,16 +92,28 @@ def summarize_text(
 ) -> SummarizationResponse:
     """Generate a summary for the provided text."""
 
-    result = summarize(
-        loaded_model=app.state.loaded_model,
-        text=request.text,
-        generation_config=(
-            app.state.generation_config
-        ),
-        tokenization_config=(
-            app.state.tokenization_config
-        ),
-    )
+    try:
+        result = summarize(
+            loaded_model=app.state.loaded_model,
+            text=request.text,
+            generation_config=(
+                app.state.generation_config
+            ),
+            tokenization_config=(
+                app.state.tokenization_config
+            ),
+        )
+    except Exception:
+        logger.exception(
+            "Summarization inference failed."
+        )
+
+        raise HTTPException(
+            status_code=(
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            ),
+            detail="Failed to generate summary.",
+        )
 
     return SummarizationResponse(
         summary=result.summary,
